@@ -1,0 +1,22 @@
+{
+  "name": "euro-tours-nodejs",
+  "version": "1.0.0",
+  "description": "This is a booking platform, offering a wide range of outdoor adventures, camping experiences, and exciting journeys.",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/selimsahindev/euro-tours-nodejs.git"
+  },
+  "author": "Selim Sahin",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/selimsahindev/euro-tours-nodejs/issues"
+  },
+  "homepage": "https://github.com/selimsahindev/euro-tours-nodejs#readme",
+  "dependencies": {
+    "express": "^4.18.2"
+  }
+}
