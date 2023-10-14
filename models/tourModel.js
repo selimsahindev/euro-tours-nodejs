@@ -54,6 +54,10 @@ const tourSchema = mongoose.Schema(
       select: false,
     },
     startDates: [Date],
+    secretTour: {
+      type: Boolean,
+      default: false,
+    },
   },
   {
     toJSON: { virtuals: true },
@@ -61,17 +65,35 @@ const tourSchema = mongoose.Schema(
   },
 );
 
+// Virtual properties
 tourSchema.virtual('durationWeeks').get(function () {
   return this.duration / 7;
 });
 
+// Document middleware
 tourSchema.pre('save', function (next) {
   this.slug = slugify(this.name, { lower: true });
   next();
 });
 
-tourSchema.post('save', function (doc, next) {
-  console.log(doc);
+// Query middleware
+// For all queries that start with find (We used regex)
+tourSchema.pre(/^find/, function (next) {
+  this.find({ secretTour: { $ne: true } });
+  this.start = Date.now();
+  next();
+});
+
+tourSchema.post(/^find/, function (docs, next) {
+  console.log(`Query took ${Date.now() - this.start} milliseconds`);
+  next();
+});
+
+// Aggregation middleware
+tourSchema.pre('aggregate', function (next) {
+  // Add a match stage to the beginning of the aggregation pipeline
+  // this.pipeline() returns an array of all the stages
+  this.pipeline().unshift({ $match: { secretTour: { $ne: true } } });
   next();
 });
 
