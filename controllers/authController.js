@@ -3,6 +3,7 @@ const User = require('../models/userModel');
 const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
 const { promisify } = require('util');
+const sendEmail = require('../utils/email');
 
 const signToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, {
@@ -124,5 +125,38 @@ exports.forgotPassword = async (req, res, next) => {
   await user.save({ validateBeforeSave: false });
 
   // 3) Send it to user's email.
+  const resetUrl = `${req.protocol}://${req.get(
+    'host',
+  )}/api/v1/users/resetPassword/${resetToken}`;
+
+  const message = `Forgot your password? Submit a PATCH request with your new password and passwordConfirm to: ${resetUrl}.\nIf you didn't forget your password, please ignore this email!`;
+
+  try {
+    await sendEmail({
+      email: user.email,
+      subject: 'Your password reset token (valid for 10 minutes)',
+      message,
+    });
+
+    res.status(200).json({
+      status: 'success',
+      message: 'Token sent to email!',
+    });
+  } catch (err) {
+    // If there is an error, we need to clear the passwordResetToken
+    user.passwordResetToken = undefined;
+    user.passwordResetExpires = undefined;
+
+    // We need to set the validateBeforeSave option to false because
+    // we don't want to validate the passwordConfirm field.
+    await user.save({ validateBeforeSave: false });
+
+    return next(
+      new AppError(
+        'There was an error sending the email. Try again later!',
+        500,
+      ),
+    );
+  }
 };
 exports.resetPassword = (req, res, next) => {};
