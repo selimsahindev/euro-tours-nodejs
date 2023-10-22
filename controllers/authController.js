@@ -107,3 +107,22 @@ exports.restrictTo = (...roles) => {
     next();
   };
 };
+
+exports.forgotPassword = async (req, res, next) => {
+  // 1) Get user based on POSTed email.
+  const user = await User.findOne({ email: req.body.email });
+
+  if (!user) {
+    return next(new AppError('There is no user with this email address.', 404));
+  }
+
+  // 2) Generate the random reset token.
+  const resetToken = user.createPasswordResetToken();
+
+  // We need to set the validateBeforeSave option to false because
+  // we don't want to validate the passwordConfirm field.
+  await user.save({ validateBeforeSave: false });
+
+  // 3) Send it to user's email.
+};
+exports.resetPassword = (req, res, next) => {};
