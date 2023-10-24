@@ -17,6 +17,11 @@ router.patch(
   authController.protect,
   userController.updateLoggedInUser,
 );
+router.delete(
+  '/deleteLoggedInUser',
+  authController.protect,
+  userController.deleteLoggedInUser,
+);
 
 router.post('/forgotPassword', authController.forgotPassword);
 router.patch('/resetPassword/:token', authController.resetPassword);
