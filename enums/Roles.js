@@ -5,6 +5,6 @@ const Roles = {
   Admin: 'admin',
 };
 
-const getValues = () => Object.values(Roles);
+const getRoleValues = () => Object.values(Roles);
 
-module.exports = { Roles, getValues };
+module.exports = { Roles, getRoleValues };
