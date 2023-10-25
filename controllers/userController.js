@@ -26,6 +26,23 @@ exports.getAllUsers = catchAsync(async (req, res, next) => {
   });
 });
 
+exports.getUser = catchAsync(async (req, res, next) => {
+  const user = await User.findById(req.params.id);
+
+  // If user is not found
+  if (!user) {
+    return next(new AppError('No user found with that ID', 404));
+  }
+
+  // If user is found
+  res.status(200).json({
+    status: 'success',
+    data: {
+      user,
+    },
+  });
+});
+
 exports.updateLoggedInUser = catchAsync(async (req, res, next) => {
   // 1) Create error if user POSTs password data.
   if (req.body.password || req.body.passwordConfirm) {
@@ -43,7 +60,9 @@ exports.updateLoggedInUser = catchAsync(async (req, res, next) => {
 
   res.status(200).json({
     status: 'success',
-    user: updatedUser,
+    data: {
+      updatedUser,
+    },
   });
 });
 
@@ -55,13 +74,6 @@ exports.deleteLoggedInUser = catchAsync(async (req, res, next) => {
     data: null,
   });
 });
-
-exports.getUser = (req, res) => {
-  res.status(500).json({
-    status: 'error',
-    message: 'Get user route is not yet defined',
-  });
-};
 
 exports.createUser = (req, res) => {
   res.status(500).json({
