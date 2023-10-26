@@ -70,6 +70,7 @@ exports.login = catchAsync(async (req, res, next) => {
   createSendToken(user, 200, res);
 });
 
+// Make sure the user is logged in before accessing any route.
 exports.protect = catchAsync(async (req, res, next) => {
   let token;
 
