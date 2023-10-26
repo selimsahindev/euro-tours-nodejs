@@ -15,35 +15,6 @@ const filterObj = (obj, ...allowedFields) => {
   return newObj;
 };
 
-exports.getAllUsers = catchAsync(async (req, res, next) => {
-  const users = await User.find();
-
-  res.status(200).json({
-    status: 'success',
-    results: users.length,
-    data: {
-      users,
-    },
-  });
-});
-
-exports.getUser = catchAsync(async (req, res, next) => {
-  const user = await User.findById(req.params.id);
-
-  // If user is not found
-  if (!user) {
-    return next(new AppError('No user found with that ID', 404));
-  }
-
-  // If user is found
-  res.status(200).json({
-    status: 'success',
-    data: {
-      user,
-    },
-  });
-});
-
 exports.updateLoggedInUser = catchAsync(async (req, res, next) => {
   // 1) Create error if user POSTs password data.
   if (req.body.password || req.body.passwordConfirm) {
@@ -67,11 +38,6 @@ exports.updateLoggedInUser = catchAsync(async (req, res, next) => {
   });
 });
 
-// Do not update passwords with this!
-exports.updateUser = factory.updateOne(User);
-exports.deleteUser = factory.deleteOne(User);
-exports.createUser = factory.createOne(User);
-
 exports.deleteLoggedInUser = catchAsync(async (req, res, next) => {
   await User.findByIdAndUpdate(req.user.id, { active: false });
 
@@ -80,3 +46,10 @@ exports.deleteLoggedInUser = catchAsync(async (req, res, next) => {
     data: null,
   });
 });
+
+exports.getAllUsers = factory.getAll(User);
+exports.getUser = factory.getOne(User);
+exports.createUser = factory.createOne(User);
+// Do not update passwords with this!
+exports.updateUser = factory.updateOne(User);
+exports.deleteUser = factory.deleteOne(User);
