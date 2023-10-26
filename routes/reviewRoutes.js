@@ -5,7 +5,11 @@ const { Roles } = require('../enums/Roles');
 
 const router = express.Router({ mergeParams: true });
 
-router.route('/:id').get(reviewController.getReview);
+router
+  .route('/:id')
+  .get(reviewController.getReview)
+  .delete(reviewController.deleteReview);
+
 router
   .route('/')
   .get(reviewController.getAllReviews)

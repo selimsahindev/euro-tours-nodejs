@@ -1,6 +1,7 @@
 const User = require('../models/userModel');
 const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
+const factory = require('./handlerFactory');
 
 const filterObj = (obj, ...allowedFields) => {
   const newObj = {};
@@ -65,6 +66,8 @@ exports.updateLoggedInUser = catchAsync(async (req, res, next) => {
     },
   });
 });
+
+exports.deleteUser = factory.deleteOne(User);
 
 exports.deleteLoggedInUser = catchAsync(async (req, res, next) => {
   await User.findByIdAndUpdate(req.user.id, { active: false });
