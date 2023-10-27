@@ -5,17 +5,24 @@ const { Roles } = require('../enums/Roles');
 
 const router = express.Router({ mergeParams: true });
 
+router.use(authController.protect);
+
 router
   .route('/:id')
   .get(reviewController.getReview)
-  .patch(reviewController.updateReview)
-  .delete(reviewController.deleteReview);
+  .patch(
+    authController.restrictTo(Roles.User, Roles.Admin),
+    reviewController.updateReview,
+  )
+  .delete(
+    authController.restrictTo(Roles.User, Roles.Admin),
+    reviewController.deleteReview,
+  );
 
 router
   .route('/')
   .get(reviewController.getAllReviews)
   .post(
-    authController.protect,
     authController.restrictTo(Roles.User),
     reviewController.setTourUserIds,
     reviewController.createReview,
