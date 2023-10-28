@@ -127,6 +127,8 @@ const tourSchema = mongoose.Schema(
 
 tourSchema.index({ price: 1, ratingsAverage: -1 });
 tourSchema.index({ slug: 1 });
+// 2dsphere is for geospatial data stored as GeoJSON objects
+tourSchema.index({ startLocation: '2dsphere' });
 
 // Virtual properties
 tourSchema.virtual('durationWeeks').get(function () {
