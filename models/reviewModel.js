@@ -33,6 +33,10 @@ const reviewSchema = new mongoose.Schema(
   },
 );
 
+// This will prevent a user from submitting more than one review per tour.
+// A user can still submit multiple reviews on different tours.
+reviewSchema.index({ tour: 1, user: 1 }, { unique: true });
+
 reviewSchema.pre(/^find/, function (next) {
   this.populate({
     path: 'user',
@@ -70,9 +74,8 @@ reviewSchema.statics.calcAverageRatings = async function (tourId) {
   }
 };
 
-reviewSchema.post('save', function (next) {
+reviewSchema.post('save', function () {
   this.constructor.calcAverageRatings(this.tour);
-  next();
 });
 
 reviewSchema.pre(/^findOneAnd/, async function (next) {
