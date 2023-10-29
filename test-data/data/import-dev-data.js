@@ -6,7 +6,7 @@ const User = require('../../models/userModel');
 const Review = require('../../models/reviewModel');
 
 mongoose
-  .connect(process.env.DATABASE_LOCAL, {
+  .connect(process.env.DB_CONNECTION_STRING, {
     useNewUrlParser: true,
     useCreateIndex: true,
     useFindAndModify: false,
